@@ -4,11 +4,12 @@
 {% block content %}
 <style>
     body {
-        background-color: #2B5797 !important;
+        background: url("{{ url_for('static', filename='img/cinepolis.jpg') }}") no-repeat center center fixed;
+    background-size: cover;
     }
 
     .cinepolis-container {
-        background-color: #2B5797;
+        
         color: white;
         padding: 20px;
     }
@@ -134,10 +135,6 @@
         </div>
 
         <div class="col-md-4">
-            <div class="cinepolis-logo">
-                <h1>Cinépolis</h1>
-                <p>LA CAPITAL DEL CINE</p>
-            </div>
 
             <div class="section-box text-center">
                 <div class="section-title">Acciones</div>
