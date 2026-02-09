@@ -94,6 +94,76 @@ def operas():
     </form>
             """
   
+@app.route('/cinepolis', methods=['GET', 'POST'])
+def cinepolis():
+    resultado = None
+    cinepolis_form = forms.CinepolisForm(request.form)
+    
+    if request.method == 'POST' and cinepolis_form.validate():
+        nombre = cinepolis_form.nombre.data
+        personas = cinepolis_form.personas.data
+        cantidad = cinepolis_form.cantidad.data
+        tarjeta_cineco = cinepolis_form.tarjeta_cineco.data
+        
+        limite_boletos = 7 * personas
+        
+        if cantidad > limite_boletos:
+            flash(f"Error: Cada persona puede comprar máximo 7 boletos. Para {personas} persona(s) el límite es {limite_boletos} boletos. Intentaste comprar {cantidad} boletos.")
+            return render_template('cinepolis.html', form=cinepolis_form, resultado=resultado)
+        
+        boletos_por_persona = cantidad / personas
+        precio_boleta = 12
+        subtotal = precio_boleta * cantidad
+        
+        if boletos_por_persona > 5:
+            descuento_cantidad = 0.15
+        elif boletos_por_persona >= 3:
+            descuento_cantidad = 0.10
+        else:
+            descuento_cantidad = 0.0
+        
+        monto_descuento = subtotal * descuento_cantidad
+        total = subtotal - monto_descuento
+        
+        descuento_cineco = 0
+        if tarjeta_cineco:
+            descuento_cineco = total * 0.10
+            total = total - descuento_cineco
+        
+        resultado = {
+            'nombre': nombre,
+            'personas': personas,
+            'cantidad': cantidad,
+            'boletos_por_persona': boletos_por_persona,
+            'precio_boleta': precio_boleta,
+            'subtotal': subtotal,
+            'descuento_cantidad': descuento_cantidad * 100,
+            'monto_descuento': monto_descuento,
+            'descuento_cineco': descuento_cineco,
+            'total': total,
+            'tiene_tarjeta': tarjeta_cineco
+        }
+        
+        mensaje = f"Compra procesada para {personas} persona(s). Total: ${total:.2f}"
+        flash(mensaje)
+    
+    return render_template('cinepolis.html', form=cinepolis_form, resultado=resultado)
+
+@app.route("/distancia", methods=["GET", "POST"])
+def calcular_distancia():
+    resultado_distancia = None
+    
+    if request.method == "POST":
+            x1 = float(request.form.get("x1", 0))
+            x2 = float(request.form.get("x2", 0))
+            y1 = float(request.form.get("y1", 0))
+            y2 = float(request.form.get("y2", 0))
+            
+            dx = x2 - x1
+            dy = y2 - y1
+            resultado_distancia = ((dx**2) + (dy**2))**0.5
+            resultado_distancia = round(resultado_distancia, 2)
+    return render_template("distancia.html", resultado=resultado_distancia)
 
 
 
